@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 
 def authenticate_ee():
     """Authenticate Earth Engine using service account"""
-    #key_file = os.environ["GEE_PROJ"]
+    # key_file = os.environ["GEE_PROJ"]
     ee.Authenticate()
     ee.Initialize(project = "kenya-project-461119")
 
@@ -94,8 +94,7 @@ def main():
             
             # Save to data directory
             os.makedirs('data', exist_ok=True)
-            #final_df.to_csv('data/kenya_gpp_data.csv', index=False)
-            final_df.to_file('data/kenya_gpp_data.parquet', driver='GPKG', index = False)
+            final_df.to_csv('data/kenya_gpp_data.csv', index=False)
             
             # Get the maximum date from the combined GDF for metadata
             max_date_in_data = pd.to_datetime(combined_gdf['formatted_date']).max()
