@@ -9,7 +9,7 @@ def authenticate_ee():
     """Authenticate Earth Engine using service account"""
     key_file = os.environ["GEE_PROJ"]
     ee.Authenticate()
-    ee.Initialize(project = "kenya-project-461119")
+    ee.Initialize(project = key_file)
 
 def get_last_update_date():
     """Get last update from local file"""
