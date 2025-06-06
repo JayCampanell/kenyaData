@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 
 def authenticate_ee():
     """Authenticate Earth Engine using service account"""
-    key_file = os.environ["GEE_PROJ"]
+    key_file = os.environ["eeproject"]
     ee.Authenticate()
     ee.Initialize(project = key_file)
 
@@ -83,19 +83,20 @@ def main():
 
         # Save results if there are new images
         if gdfs:
-            combined_gdf = pd.concat(gdfs, ignore_index=True)
+            combined_gdf = gpd.GeoDataFrame(pd.concat(gdfs, ignore_index=True))
             
             # Load existing data
-            if os.path.exists('data/kenya_gpp_data.csv'):
-                existing_df = pd.read_csv('data/kenya_gpp_data.csv')
+            if os.path.exists('data/kenya_gpp_data.parquet'):
+                existing_df = gpd.read_parquet('data/kenya_gpp_data.parquet')
                 final_df = gpd.GeoDataFrame(pd.concat([existing_df, combined_gdf], ignore_index=True))
             else:
                 final_df = gpd.GeoDataFrame(combined_gdf)
             
             # Save to data directory
             os.makedirs('data', exist_ok=True)
-            final_df.to_csv('data/kenya_gpp_data.csv', index=False)
-            
+            final_df.to_parquet('data/kenya_gpp_data.parquet', index = False)
+            #final_df.to_csv('data/kenya_gpp_data.csv', index=False)
+
             # Get the maximum date from the combined GDF for metadata
             max_date_in_data = pd.to_datetime(combined_gdf['formatted_date']).max()
             update_date = max_date_in_data.to_pydatetime()
