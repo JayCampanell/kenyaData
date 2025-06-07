@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 
 def authenticate_ee():
     """Authenticate Earth Engine using service account"""
-    key_file = os.environ["eeproject"]
+    key_file = os.environ["GEE_PROJ"]
     ee.Authenticate()
     ee.Initialize(project = key_file)
 
