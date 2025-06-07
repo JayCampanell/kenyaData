@@ -7,9 +7,10 @@ from datetime import datetime, timedelta
 
 def authenticate_ee():
     """Authenticate Earth Engine using service account"""
-    key_file = os.environ["GEE_PROJ"]
-    ee.Authenticate()
-    ee.Initialize(project = key_file)
+    gee_code = os.environ["GEE_PROJ"]
+    cloud_code = os.environ["CLOUD_AUTH"]
+    ee.Authenticate(authorization_code = cloud_code, quiet = True)
+    ee.Initialize(project = gee_code)
 
 def get_last_update_date():
     """Get last update from local file"""

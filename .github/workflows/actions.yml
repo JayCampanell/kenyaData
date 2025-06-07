@@ -1,6 +1,7 @@
 name: run main.py
 
 on:
+  workflow_dispatch
   schedule:
     - cron: '45 20 * * 5,6' # At 00:00 on Monday and Friday
 
