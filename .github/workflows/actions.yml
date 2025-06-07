@@ -26,6 +26,7 @@ jobs:
       - name: execute py script # run main.py
         env:
           GEE_PROJ: ${{ secrets.GEE_PROJ }}
+          CLOUD_AUTH: ${{ secrets.CLOUD_AUTH }}
         run: python main.py
           
       - name: commit files
