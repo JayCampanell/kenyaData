@@ -9,8 +9,10 @@ def authenticate_ee():
     """Authenticate Earth Engine using service account"""
     gee_code = os.environ["GEE_PROJ"]
     cloud_code = os.environ["CLOUD_AUTH"]
-    ee.Authenticate(authorization_code = cloud_code, quiet = True)
-    ee.Initialize(project = gee_code)
+    service_account = "660093545776-compute@developer.gserviceaccount.com"
+    credentials = ee.ServiceAccountCredentials(service_account, '/tmp/gee-service-account.json')
+    # ee.Authenticate(authorization_code = cloud_code, quiet = True)
+    ee.Initialize(credentials)
 
 def get_last_update_date():
     """Get last update from local file"""
