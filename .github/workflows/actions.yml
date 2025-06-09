@@ -1,9 +1,8 @@
 name: run main.py
 
 on:
-  workflow_dispatch:
-  #schedule:
-  #  - cron: '45 20 * * 5,6' # At 00:00 on Monday and Friday
+  schedule:
+    - cron: '0 0 * * 1,5' # At 00:00 on Monday and Friday
 
 jobs:
   build:
@@ -27,9 +26,6 @@ jobs:
           mkdir -p ~/.config/earthengine
           echo '${{ secrets.EE_CREDENTIALS }}' > /tmp/gee-service-account.json
       - name: execute py script # run main.py
-        env:
-          GEE_PROJ: ${{ secrets.GEE_PROJ }}
-          CLOUD_AUTH: ${{ secrets.CLOUD_AUTH }}
         run: python main.py
           
       - name: commit files
