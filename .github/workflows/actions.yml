@@ -1,9 +1,8 @@
 name: run main.py
 
 on:
-  workflow_dispatch
-  #schedule:
-  #  - cron: '0 0 * * 1,5' # At 00:00 on Monday and Friday
+  schedule:
+    - cron: '0 0 * * 1,5' # At 00:00 on Monday and Friday
 
 jobs:
   build:
