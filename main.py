@@ -4,11 +4,18 @@ import geopandas as gpd
 import pandas as pd
 import ee
 from datetime import datetime, timedelta
+from dotenv import load_dotenv
+from os.path import abspath, dirname
+
+
+os.chdir(dirname(abspath(__file__)))
+
+load_dotenv()
 
 def authenticate_ee():
     """Authenticate Earth Engine using service account"""
     service_account = os.environ['SERVICE_ACCOUNT']
-    credentials = ee.ServiceAccountCredentials(service_account, '/tmp/gee-service-account.json')
+    credentials = ee.ServiceAccountCredentials(service_account, 'tmp/gee-service-account.json')
     ee.Initialize(credentials)
 
 def get_last_update_date():
@@ -90,9 +97,9 @@ def main():
             combined_gdf['month-year'] = combined_gdf['date'].dt.to_period("M")
 
             grouped = combined_gdf.groupby(['geometry', 'shapeName','month-year'], as_index = False)['Gpp'].mean()
-            pivot = grouped.drop('Gpp', axis = 1).pivot_table(index = ['shapeName', 'geometry'],
+            pivot = grouped.pivot_table(index = ['shapeName', 'geometry'],
                                                     columns = 'month-year',
-                                                    values = 'scaled_gpp')
+                                                    values = 'Gpp')
 
             pivot.columns = pivot.columns.strftime('%B %Y')
 
@@ -103,7 +110,7 @@ def main():
 
             dictionary = pd.read_csv('modis_df_with_county.csv')
 
-            final = dictionary[['County', 'Sub-county']].merge(final, by = 'Sub-county', how = 'left')
+            final = dictionary[['County', 'Sub-county']].merge(final, on = 'Sub-county', how = 'left')
 
             # Load existing data
             if os.path.exists('data/kenya_gpp_data.parquet'):
