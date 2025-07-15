@@ -28,7 +28,7 @@ jobs:
           echo '${{ secrets.EE_CREDENTIALS }}' > /tmp/gee-service-account.json
       - name: execute py script # run main.py
         env:
-          SERVICE_ACCOUNT = '${{ secrets.SERVICE_ACCOUNT }}'
+          SERVICE_ACCOUNT: ${{ secrets.SERVICE_ACCOUNT }}
         run: python main.py
           
       - name: commit files
