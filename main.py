@@ -4,18 +4,13 @@ import geopandas as gpd
 import pandas as pd
 import ee
 from datetime import datetime, timedelta
-from dotenv import load_dotenv
-from os.path import abspath, dirname
 
 
-os.chdir(dirname(abspath(__file__)))
-
-load_dotenv()
 
 def authenticate_ee():
     """Authenticate Earth Engine using service account"""
     service_account = os.environ['SERVICE_ACCOUNT']
-    credentials = ee.ServiceAccountCredentials(service_account, 'tmp/gee-service-account.json')
+    credentials = ee.ServiceAccountCredentials(service_account, '/tmp/gee-service-account.json')
     ee.Initialize(credentials)
 
 def get_last_update_date():
