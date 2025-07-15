@@ -7,11 +7,8 @@ from datetime import datetime, timedelta
 
 def authenticate_ee():
     """Authenticate Earth Engine using service account"""
-    gee_code = os.environ["GEE_PROJ"]
-    cloud_code = os.environ["CLOUD_AUTH"]
-    service_account = "660093545776-compute@developer.gserviceaccount.com"
+    service_account = os.environ['SERVICE_ACCOUNT']
     credentials = ee.ServiceAccountCredentials(service_account, '/tmp/gee-service-account.json')
-    # ee.Authenticate(authorization_code = cloud_code, quiet = True)
     ee.Initialize(credentials)
 
 def get_last_update_date():
@@ -88,12 +85,33 @@ def main():
         if gdfs:
             combined_gdf = gpd.GeoDataFrame(pd.concat(gdfs, ignore_index=True))
             
+            # Pivot the Combined GDF
+            combined_gdf['date'] = pd.to_datetime(combined_gdf['formatted_date'])
+            combined_gdf['month-year'] = combined_gdf['date'].dt.to_period("M")
+
+            grouped = combined_gdf.groupby(['geometry', 'shapeName','month-year'], as_index = False)['Gpp'].mean()
+            pivot = grouped.drop('Gpp', axis = 1).pivot_table(index = ['shapeName', 'geometry'],
+                                                    columns = 'month-year',
+                                                    values = 'scaled_gpp')
+
+            pivot.columns = pivot.columns.strftime('%B %Y')
+
+            pivot.reset_index(inplace = True)
+
+            final = pivot.drop('geometry',axis = 1).rename(columns = {'shapeName': 'Sub-county'})
+            final['Sub-county'] = final['Sub-county'] + ' Sub County'
+
+            dictionary = pd.read_csv('modis_df_with_county.csv')
+
+            final = dictionary[['County', 'Sub-county']].merge(final, by = 'Sub-county', how = 'left')
+
             # Load existing data
             if os.path.exists('data/kenya_gpp_data.parquet'):
                 existing_df = gpd.read_parquet('data/kenya_gpp_data.parquet')
-                final_df = gpd.GeoDataFrame(pd.concat([existing_df, combined_gdf], ignore_index=True))
+                final_df = gpd.GeoDataFrame(existing_df.merge(final, on = ['County', 'Sub-county']))
+                final_df = gpd.GeoDataFrame(pd.merge([existing_df, final], ignore_index=True))
             else:
-                final_df = gpd.GeoDataFrame(combined_gdf)
+                final_df = gpd.GeoDataFrame(final)
             
             # Save to data directory
             os.makedirs('data', exist_ok=True)
