@@ -9,8 +9,9 @@ from datetime import datetime, timedelta
 
 def authenticate_ee():
     """Authenticate Earth Engine using service account"""
-    service_account = os.environ['SERVICE_ACCOUNT']
-    credentials = ee.ServiceAccountCredentials(service_account, '/tmp/gee-service-account.json')
+    #service_account = os.environ['SERVICE_ACCOUNT']
+    service_account = "7cc173a2e8ea2e0d6d03fd4fd243a656c50c1c39"
+    credentials = ee.ServiceAccountCredentials(service_account, 'tmp/gee-service-account.json')
     ee.Initialize(credentials)
 
 def get_last_update_date():
@@ -43,6 +44,7 @@ def main():
     authenticate_ee()
     
     last_update = get_last_update_date()
+
     processed_ids = get_processed_image_ids()  # Get existing processed IDs
     
     print(f"Starting update. Last update: {last_update}")
@@ -64,7 +66,7 @@ def main():
     current = ee.Date(datetime.now().strftime('%Y-%m-%d'))
 
     kenyaImageCollection = ee.ImageCollection("MODIS/061/MOD17A2H").select("Gpp").filterBounds(kenyaGeo).filterDate(lastUpdateEE,current)
-    
+
     gdfs = []
     new_processed_ids = processed_ids.copy()  # Start with existing processed IDs
     
@@ -108,9 +110,9 @@ def main():
 
         # Load existing data
         if os.path.exists('data/kenya_gpp_data.parquet'):
-            existing_df = gpd.read_parquet('data/kenya_gpp_data.parquet')
+            existing_df = pd.read_parquet('data/kenya_gpp_data.parquet')
             final_df = gpd.GeoDataFrame(existing_df.merge(final, on = ['County', 'Sub-county']))
-            final_df = gpd.GeoDataFrame(pd.merge([existing_df, final], ignore_index=True))
+
         else:
             final_df = gpd.GeoDataFrame(final)
         
