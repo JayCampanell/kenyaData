@@ -9,9 +9,8 @@ from datetime import datetime, timedelta
 
 def authenticate_ee():
     """Authenticate Earth Engine using service account"""
-    #service_account = os.environ['SERVICE_ACCOUNT']
-    service_account = "7cc173a2e8ea2e0d6d03fd4fd243a656c50c1c39"
-    credentials = ee.ServiceAccountCredentials(service_account, 'tmp/gee-service-account.json')
+    service_account = os.environ['SERVICE_ACCOUNT']
+    credentials = ee.ServiceAccountCredentials(service_account, '/tmp/gee-service-account.json')
     ee.Initialize(credentials)
 
 def get_last_update_date():
