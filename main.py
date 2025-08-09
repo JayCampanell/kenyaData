@@ -7,6 +7,8 @@ from datetime import datetime, timedelta
 
 
 
+
+
 def authenticate_ee():
     """Authenticate Earth Engine using service account"""
     service_account = os.environ['SERVICE_ACCOUNT']
@@ -65,7 +67,7 @@ def main():
     current = ee.Date(datetime.now().strftime('%Y-%m-%d'))
 
     kenyaImageCollection = ee.ImageCollection("MODIS/061/MOD17A2H").select("Gpp").filterBounds(kenyaGeo).filterDate(lastUpdateEE,current)
-
+    
     gdfs = []
     new_processed_ids = processed_ids.copy()  # Start with existing processed IDs
     
