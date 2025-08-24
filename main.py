@@ -129,9 +129,11 @@ def main():
         print(f"Successfully processed {len(gdfs)} new images")
         print(f"Latest data date: {max_date_in_data.strftime('%Y-%m-%d')}")
     else:
+        existing_df = pd.read_parquet('data/kenya_gpp_data.parquet')
+        latest_update = pd.to_datetime(existing_df['formatted_date']).max()
         print("No new images to process")
         # If no new images, use current date as fallback
-        update_date = datetime.now()
+        update_date = latest_update
     
     # Always update metadata after checking for updates
     save_metadata(update_date, new_processed_ids)
