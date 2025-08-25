@@ -129,8 +129,7 @@ def main():
         print(f"Successfully processed {len(gdfs)} new images")
         print(f"Latest data date: {max_date_in_data.strftime('%Y-%m-%d')}")
     else:
-        existing_df = pd.read_parquet('data/kenya_gpp_data.parquet')
-        latest_update = pd.to_datetime(existing_df['formatted_date']).max()
+        latest_update = get_last_update_date()
         print("No new images to process")
         # If no new images, use date of last image fallback
         update_date = latest_update
