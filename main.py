@@ -132,7 +132,7 @@ def main():
         existing_df = pd.read_parquet('data/kenya_gpp_data.parquet')
         latest_update = pd.to_datetime(existing_df['formatted_date']).max()
         print("No new images to process")
-        # If no new images, use current date as fallback
+        # If no new images, use date of last image fallback
         update_date = latest_update
     
     # Always update metadata after checking for updates
