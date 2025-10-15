@@ -112,7 +112,7 @@ def main():
         # Load existing data
         if os.path.exists('data/kenya_gpp_data.parquet'):
             existing_df = pd.read_parquet('data/kenya_gpp_data.parquet')
-            final_df = gpd.GeoDataFrame(existing_df.merge(final, on = ['County', 'Sub-county'], suffixes=('', '_new')))
+            final_df = gpd.GeoDataFrame(existing_df.merge(final, on = ['Sub-county'], suffixes=('', '_new')))
 
             for col in list(existing_df.columns):
                 if col in final.columns and col != 'Sub-county':  # skip key
