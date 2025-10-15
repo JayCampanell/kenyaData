@@ -105,14 +105,21 @@ def main():
         final = pivot.drop('geometry',axis = 1).rename(columns = {'shapeName': 'Sub-county'})
         final['Sub-county'] = final['Sub-county'] + ' Sub County'
 
-        dictionary = pd.read_csv('modis_df_with_county.csv')
+        #dictionary = pd.read_csv('modis_df_with_county.csv')
 
-        final = dictionary[['County', 'Sub-county']].merge(final, on = 'Sub-county', how = 'left')
+        #final = dictionary[['County', 'Sub-county']].merge(final, on = 'Sub-county', how = 'left')
 
         # Load existing data
         if os.path.exists('data/kenya_gpp_data.parquet'):
             existing_df = pd.read_parquet('data/kenya_gpp_data.parquet')
-            final_df = gpd.GeoDataFrame(existing_df.merge(final, on = ['County', 'Sub-county']))
+            final_df = gpd.GeoDataFrame(existing_df.merge(final, on = ['County', 'Sub-county'], suffixes=('', '_new')))
+
+            for col in list(existing_df.columns):
+                if col in final.columns and col != 'Sub-county' and col != 'County':  # skip key
+                    final_df[col] = final_df[[col, f'{col}_new']].mean(axis=1)
+                    final_df.drop(columns=f'{col}_new', inplace=True)
+
+            final_df = final_df.rename(columns = {'Sub-county': 'Subcoounty'})
 
         else:
             final_df = gpd.GeoDataFrame(final)
@@ -120,7 +127,6 @@ def main():
         # Save to data directory
         os.makedirs('data', exist_ok=True)
         final_df.to_parquet('data/kenya_gpp_data.parquet', index = False)
-        #final_df.to_csv('data/kenya_gpp_data.csv', index=False)
 
         # Get the maximum date from the combined GDF for metadata
         max_date_in_data = pd.to_datetime(combined_gdf['formatted_date']).max()
