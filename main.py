@@ -115,11 +115,11 @@ def main():
             final_df = gpd.GeoDataFrame(existing_df.merge(final, on = ['County', 'Sub-county'], suffixes=('', '_new')))
 
             for col in list(existing_df.columns):
-                if col in final.columns and col != 'Sub-county' and col != 'County':  # skip key
+                if col in final.columns and col != 'Sub-county':  # skip key
                     final_df[col] = final_df[[col, f'{col}_new']].mean(axis=1)
                     final_df.drop(columns=f'{col}_new', inplace=True)
 
-            final_df = final_df.rename(columns = {'Sub-county': 'Subcoounty'})
+            final_df = final_df.rename(columns = {'Sub-county': 'Subcounty'})
 
         else:
             final_df = gpd.GeoDataFrame(final)
